@@ -328,19 +328,24 @@ var Crustulum = {
             } else if (!Crustulum.OG.hasGod && Game.hasGod) {
                 Crustulum.OG.hasGod = Game.hasGod;
             }
-            Game.hasGod = function(what) {
-                if (Crustulum.getConfig('allGodsActive')) {
-                    if (['ages'].includes(what)) return false; // Add gods to this if you want to skip them
-                    return 1;
-                } else if (Crustulum.getConfig('allGodsSlotOne')) {
-                    if(!Game.Objects['Temple'].minigameLoaded || !Game.Objects['Temple'].minigame.gods) return false; // Don't run if minigame isn't loaded (errors otherwise)
-                    let god = Game.Objects['Temple'].minigame.gods[what];
-                    for (let i=0;i<3;i++)
-                        if (Game.Objects['Temple'].minigame.slot[i]==god.id) return 1;
-                    return false;
-                } else {
-                    if (Crustulum.OG.hasGod) return Crustulum.OG.hasGod(what);
-                    else return false;
+            
+            if (!Game.Objects['Temple'].minigameLoaded || !Game.Objects['Temple'].minigame.gods) {
+                delete Game.hasGod;
+            } else {
+                Game.hasGod = function(what) {
+                    if (Crustulum.getConfig('allGodsActive')) {
+                        if (['ages'].includes(what)) return false; // Add gods to this if you want to skip them
+                        return 1;
+                    } else if (Crustulum.getConfig('allGodsSlotOne')) {
+                        if(!Game.Objects['Temple'].minigameLoaded || !Game.Objects['Temple'].minigame.gods) return false; // Don't run if minigame isn't loaded (errors otherwise)
+                        let god = Game.Objects['Temple'].minigame.gods[what];
+                        for (let i=0;i<3;i++)
+                            if (Game.Objects['Temple'].minigame.slot[i]==god.id) return 1;
+                        return false;
+                    } else {
+                        if (Crustulum.OG.hasGod) return Crustulum.OG.hasGod(what);
+                        else return false;
+                    }
                 }
             }
         },
